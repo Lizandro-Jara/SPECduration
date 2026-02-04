@@ -1,0 +1,76 @@
+cff-version: 1.2.0
+
+message: >-
+  If you use this software in academic work, please cite it using the
+  preferred citation below.
+
+title: >-
+  drs-duration: Autonomous program for the estimation of seismic duration
+  through harmonic fitting of the Displacement Response Spectrum (DRS)
+
+type: software
+
+license: MIT
+
+repository-code: "https://github.com/<your-username>/drs-duration"
+url: "https://github.com/<your-username>/drs-duration"
+
+abstract: >-
+  drs-duration is an autonomous scientific software tool for estimating seismic
+  duration from the harmonic structure of the Displacement Response Spectrum
+  (DRS). Unlike traditional time-domain duration metrics based on energy or
+  acceleration thresholds, the software operates entirely in the spectral
+  domain. It implements a fully automatic and reproducible workflow that
+  computes high-resolution DRS via Newmark-β integration, identifies the
+  predominant spectral region using a derivative-based criterion, and performs
+  nonlinear harmonic fitting to characterize its local geometry. The resulting
+  spectral duration parameter provides a physically grounded and stable measure
+  of effective strong-motion duration, particularly suited for impulsive and
+  near-fault ground motions. The software is distributed as a command-line tool
+  and produces publication-ready, reproducible outputs.
+
+keywords:
+  - seismic duration
+  - displacement response spectrum
+  - harmonic fitting
+  - near-fault ground motion
+  - impulsive ground motion
+  - Newmark-beta integration
+  - scientific software
+  - reproducible research
+
+language: en
+version: "0.1.0"
+date-released: "YYYY-MM-DD"
+
+authors:
+  - given-names: "Lizandro"
+    family-names: "Jara Araoz"
+    affiliation: "Department of Civil Engineering, Universidad Peruana de Ciencias Aplicadas (UPC), Lima, Peru"
+    orcid: "https://orcid.org/0009-0009-6350-4939"
+
+  - given-names: "Brandon Omar"
+    family-names: "Burga Bustamante"
+    affiliation: "Department of Civil Engineering, Universidad Peruana de Ciencias Aplicadas (UPC), Lima, Peru"
+    orcid: "https://orcid.org/0009-0007-9341-9781"
+
+  - given-names: "Cesar"
+    family-names: "Morales Morales"
+    affiliation: "Department of Civil Engineering, Universidad Peruana de Ciencias Aplicadas (UPC), Lima, Peru"
+    orcid: "https://orcid.org/0000-0002-8820-9508"
+
+preferred-citation:
+  type: article
+  title: >-
+    drs-duration: Autonomous program for the estimation of seismic duration
+    through harmonic fitting of the Displacement Response Spectrum (DRS)
+  authors:
+    - given-names: "Lizandro"
+      family-names: "Jara Araoz"
+    - given-names: "Brandon Omar"
+      family-names: "Burga Bustamante"
+    - given-names: "Cesar"
+      family-names: "Morales Morales"
+  journal: "SoftwareX"
+  year: YYYY
+  doi: "10.XXXX/XXXXX"
