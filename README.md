@@ -4,8 +4,8 @@ drs-duration is a Python package for estimating seismic duration from the
 harmonic structure of the Displacement Response Spectrum (DRS).
 
 The method is based on a physically grounded observation: high-resolution DRS
-curves derived from impulsive and near-fault ground motions exhibit **smooth and
-harmonic-like segments across the spectrum**, reflecting the free oscillatory
+curves derived from impulsive and near-fault ground motions exhibit smooth and
+harmonic-like segments across the spectrum, reflecting the free oscillatory
 response of SDOF systems subjected to impulsive excitation.
 
 Instead of relying on time-domain energy thresholds, drs-duration estimates a
