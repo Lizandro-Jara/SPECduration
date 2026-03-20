@@ -12,22 +12,18 @@ type: software
 
 license: MIT
 
-repository-code: "https://github.com/<your-username>/drs-duration"
-url: "https://github.com/<your-username>/drs-duration"
+repository-code: "https://github.com/Lizandro-Jara/drs-duration"
+url: "https://github.com/Lizandro-Jara/drs-duration"
 
 abstract: >-
-  drs-duration is an autonomous scientific software tool for estimating seismic
-  duration from the harmonic structure of the Displacement Response Spectrum
-  (DRS). Unlike traditional time-domain duration metrics based on energy or
-  acceleration thresholds, the software operates entirely in the spectral
-  domain. It implements a fully automatic and reproducible workflow that
-  computes high-resolution DRS via Newmark-β integration, identifies the
-  predominant spectral region using a derivative-based criterion, and performs
-  nonlinear harmonic fitting to characterize its local geometry. The resulting
-  spectral duration parameter provides a physically grounded and stable measure
-  of effective strong-motion duration, particularly suited for impulsive and
-  near-fault ground motions. The software is distributed as a command-line tool
-  and produces publication-ready, reproducible outputs.
+  drs-duration is a scientific software tool for estimating seismic duration
+  from the Displacement Response Spectrum (DRS). Unlike traditional
+  time-domain metrics, the method operates in the spectral domain and avoids
+  the use of energy or acceleration thresholds. The software computes
+  high-resolution DRS using Newmark-β integration, identifies the predominant
+  spectral region through a derivative-based criterion, and performs nonlinear
+  harmonic fitting. The resulting parameter provides a stable spectral measure
+  of seismic duration, particularly for impulsive and near-fault ground motions.
 
 keywords:
   - seismic duration
@@ -35,13 +31,12 @@ keywords:
   - harmonic fitting
   - near-fault ground motion
   - impulsive ground motion
-  - Newmark-beta integration
+  - Newmark-beta method
   - scientific software
   - reproducible research
-
-language: en
-version: "0.1.0"
-date-released: "YYYY-MM-DD"
+  
+version: "1.0.0"
+date-released: "2026-03-20"
 
 authors:
   - given-names: "Lizandro"
@@ -72,5 +67,6 @@ preferred-citation:
     - given-names: "Cesar"
       family-names: "Morales Morales"
   journal: "SoftwareX"
-  year: YYYY
-  doi: "10.XXXX/XXXXX"
+  year: 2026
+  doi: ""
+

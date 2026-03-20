@@ -1,20 +1,12 @@
 # drs-duration
 
-drs-duration is a Python package for estimating seismic duration from the
-harmonic structure of the Displacement Response Spectrum (DRS).
+drs-duration is a Python package for estimating seismic duration from the Displacement Response Spectrum (DRS).
 
-The method is based on a physically grounded observation: high-resolution DRS
-curves derived from impulsive and near-fault ground motions exhibit smooth and
-harmonic-like segments across the spectrum, reflecting the free oscillatory
-response of SDOF systems subjected to impulsive excitation.
+The method is based on the observation that high-resolution DRS obtained from impulsive and near-fault ground motions exhibit smooth harmonic-like segments associated with the free response of SDOF systems.
 
-Instead of relying on time-domain energy thresholds, drs-duration estimates a
-spectral-based duration parameter by automatically identifying the
-predominant harmonic window of the DRS and performing a nonlinear sinusoidal fit
-within that region.
+Instead of using time-domain thresholds, the software estimates a spectral duration parameter by automatically identifying the predominant region of the DRS and performing a nonlinear sinusoidal fit.
 
-The entire procedure is fully automatic, objective, and reproducible, and can
-be executed through a single command-line instruction.
+The workflow is fully automatic and can be executed through a command-line interface, enabling consistent and reproducible analysis.
 
 ---
 
@@ -35,40 +27,35 @@ be executed through a single command-line instruction.
 
 ## Scientific background
 
-The proposed approach exploits the fact that the residual response of an SDOF
-system subjected to impulsive excitation inherently contains terms of the form:
+The method is based on the observation that displacement response spectra (DRS) obtained from impulsive and near-fault ground motions may exhibit smooth harmonic-like segments across the spectrum. In practice, drs-duration identifies the predominant spectral region and fits a sinusoidal model within that window to estimate a characteristic spectral duration.
+
+Within these regions, the spectral shape can be approximated by a sinusoidal model of the form:
 
 $$
 R(T) = A \left| \sin\left(\frac{\pi t_d}{T} + \varphi \right) \right|
 $$
 
-where $t_d$ represents a characteristic duration parameter and $T$ is the
-structural period. This mathematical structure explains the appearance of
-harmonic-like geometries in displacement response spectra, particularly in
-near-fault records dominated by strong velocity pulses.
+where $t_d$ represents a characteristic spectral duration and $T$ is the structural period.
 
-To account for small vertical biases that may arise from numerical discretization
-or spectral processing, an extended model including a constant offset is also
-considered:
+To account for small numerical biases, an extended formulation including a constant offset is also considered:
 
 $$
 R(T) = A \left| \sin\left(\frac{\pi t_d}{T} + \varphi \right) \right| + C
 $$
 
-The constant $C$ has **no physical meaning** and acts solely as a numerical
-corrector.
+The constant $C$ has no physical interpretation and acts only as a numerical correction.
 
 ---
 
 ## Features
 
 - Computation of Displacement Response Spectrum (DRS) using Newmark-β integration  
-- Automatic detection of the predominant harmonic window around the DRS peak  
-- Derivative-based criterion with robust fallback strategies  
+- Automatic detection of the predominant spectral window around the DRS peak  
+- Derivative-based criterion with an alternative automatic fallback  
 - Systematic α-scan to select the optimal derivative threshold  
 - Nonlinear sinusoidal duration fitting, with and without constant offset  
-- Generation of publication-ready figures  
-- Fully automated command-line interface (CLI) for batch processing  
+- Generation of high-quality diagnostic figures  
+- Command-line interface (CLI) for automated and batch processing  
 - Reproducible outputs (CSV tables and PNG figures)
 
 ---
@@ -148,19 +135,14 @@ near-fault ground motion record.
 
 ## Interpretation of results
 
-The estimated duration parameter $t_d$ represents a spectral-based measure of
-effective seismic duration derived from the harmonic structure of the DRS.
-Unlike traditional time-domain duration metrics, this parameter is less
-sensitive to weak energy tails, late secondary peaks, and noise contamination.
+The estimated duration parameter $t_d$ represents a spectral measure of seismic duration derived from the structure of the DRS. Unlike traditional time-domain duration metrics, this parameter is less sensitive to low-amplitude tails, late peaks, and noise.
 
-The constant-offset model is included for numerical robustness only. The
-parameter $C$ has no physical interpretation.
+The constant-offset model is included for numerical robustness only. The parameter $C$ has no physical interpretation.
 
 
 ## Reproducibility
 
-All results are fully reproducible. Given the same input record and command-line
-options, the software will generate identical outputs.
+All results are deterministic and reproducible. Given the same input record and command-line options, the software will generate identical outputs.
 
 
 ## License
@@ -170,8 +152,7 @@ This project is released under the MIT License.
 
 ## Citation
 
-If you use this software in academic work, please cite it using the information
-provided in the `CITATION.cff` file included in this repository.
+If you use this software in academic work, please cite it using the information provided in the `CITATION.cff` file.
 
 
 

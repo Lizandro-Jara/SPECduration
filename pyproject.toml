@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "drs-duration"
-version = "0.1.0"
-description = "Spectral-based seismic duration estimation using harmonic fitting of the Displacement Response Spectrum (DRS)"
+version = "1.0.0"
+description = "Spectral estimation of seismic duration from the Displacement Response Spectrum (DRS)"
 readme = "README.md"
 requires-python = ">=3.9"
 
@@ -20,9 +20,9 @@ license = { text = "MIT" }
 keywords = [
   "seismic duration",
   "displacement response spectrum",
-  "near-fault ground motions",
+  "near-fault ground motion",
   "harmonic fitting",
-  "Newmark-beta",
+  "Newmark-beta method",
   "structural dynamics",
   "reproducible research"
 ]
