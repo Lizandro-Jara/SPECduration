@@ -2,7 +2,7 @@
 
 drs-duration is a Python package for estimating seismic duration from the Displacement Response Spectrum (DRS).
 
-The method is based on the observation that high-resolution DRS obtained from impulsive and near-fault ground motions exhibit smooth harmonic-like segments associated with the free response of SDOF systems.
+The method is based on the observation that high-resolution DRS obtained from impulsive and near-fault ground motions exhibit smooth harmonic-like segments, reflecting residual oscillatory behavior associated with pulse-dominated response in SDOF systems.
 
 Instead of using time-domain thresholds, the software estimates a spectral duration parameter by automatically identifying the predominant region of the DRS and performing a nonlinear sinusoidal fit.
 
@@ -27,6 +27,7 @@ The workflow is fully automatic and can be executed through a command-line inter
 
 ## Scientific background
 
+
 The method is based on the observation that displacement response spectra (DRS) obtained from impulsive and near-fault ground motions may exhibit smooth harmonic-like segments across the spectrum. In practice, drs-duration identifies the predominant spectral region and fits a sinusoidal model within that window to estimate a characteristic spectral duration.
 
 Within these regions, the spectral shape can be approximated by a sinusoidal model of the form:
@@ -37,15 +38,8 @@ $$
 
 where $t_d$ represents a characteristic spectral duration and $T$ is the structural period.
 
-To account for small numerical biases, an extended formulation including a constant offset is also considered:
-
-$$
-R(T) = A \left| \sin\left(\frac{\pi t_d}{T} + \varphi \right) \right| + C
-$$
-
-The constant $C$ has no physical interpretation and acts only as a numerical correction.
-
 ---
+
 
 ## Features
 
@@ -136,8 +130,6 @@ near-fault ground motion record.
 ## Interpretation of results
 
 The estimated duration parameter $t_d$ represents a spectral measure of seismic duration derived from the structure of the DRS. Unlike traditional time-domain duration metrics, this parameter is less sensitive to low-amplitude tails, late peaks, and noise.
-
-The constant-offset model is included for numerical robustness only. The parameter $C$ has no physical interpretation.
 
 
 ## Reproducibility

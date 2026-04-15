@@ -3,11 +3,10 @@ import matplotlib.pyplot as plt
 
 
 # ============================================================
-# FIG 1: DRS COMPLETO (PRO) -> show + save
+# FIG 1: FULL DRS -> show + save
 # ============================================================
 
-def plot_drs_full(T_values, RESP, title="Espectro de Respuesta de Desplazamiento (DRS)"):
-    """Versión para mostrar en pantalla (ejemplo)."""
+def plot_drs_full(T_values, RESP, title="Displacement Response Spectrum (DRS)"):
     T_values = np.asarray(T_values, dtype=float)
     RESP = np.asarray(RESP, dtype=float)
 
@@ -19,8 +18,8 @@ def plot_drs_full(T_values, RESP, title="Espectro de Respuesta de Desplazamiento
     plt.plot(T_values, RESP, color="navy", lw=2)
 
     plt.grid(True, ls="--", lw=0.6, alpha=0.65)
-    plt.xlabel("Periodo Tn [s]", fontsize=12)
-    plt.ylabel("Desplazamiento relativo pico |u| [m]", fontsize=12)
+    plt.xlabel("Period Tn [s]", fontsize=12)
+    plt.ylabel("Peak relative displacement |u| [m]", fontsize=12)
     plt.title(title, fontsize=14, fontweight="bold")
 
     plt.xlim(float(np.min(T_values)), float(np.max(T_values)))
@@ -31,8 +30,7 @@ def plot_drs_full(T_values, RESP, title="Espectro de Respuesta de Desplazamiento
     plt.show()
 
 
-def save_drs_full_png(T_values, RESP, outpath, title="Espectro de Respuesta de Desplazamiento (DRS)", dpi=300):
-    """Versión para guardar PNG (pipeline)."""
+def save_drs_full_png(T_values, RESP, outpath, title="Displacement Response Spectrum (DRS)", dpi=300):
     T_values = np.asarray(T_values, dtype=float)
     RESP = np.asarray(RESP, dtype=float)
 
@@ -44,8 +42,8 @@ def save_drs_full_png(T_values, RESP, outpath, title="Espectro de Respuesta de D
     plt.plot(T_values, RESP, color="navy", lw=2)
 
     plt.grid(True, ls="--", lw=0.6, alpha=0.65)
-    plt.xlabel("Periodo Tn [s]", fontsize=12)
-    plt.ylabel("Desplazamiento relativo pico |u| [m]", fontsize=12)
+    plt.xlabel("Period Tn [s]", fontsize=12)
+    plt.ylabel("Peak relative displacement |u| [m]", fontsize=12)
     plt.title(title, fontsize=14, fontweight="bold")
 
     plt.xlim(float(np.min(T_values)), float(np.max(T_values)))
@@ -58,7 +56,7 @@ def save_drs_full_png(T_values, RESP, outpath, title="Espectro de Respuesta de D
 
 
 # ============================================================
-# FIG 2: AUTO-ZOOM + DRS ZOOM (PRO) -> show + save
+# FIG 2: AUTO-ZOOM + DRS ZOOM -> show + save
 # ============================================================
 
 def drs_auto_zoom(T_values, RESP, zoom_frac=0.20, min_points=15):
@@ -85,7 +83,6 @@ def drs_auto_zoom(T_values, RESP, zoom_frac=0.20, min_points=15):
 
     zoom_used = float(zoom_frac)
 
-    # Si zoom queda muy angosto, ampliar
     if T_fit.size < min_points:
         zoom_used = 0.35
         Tmin_zoom = max(Tmin_full, Tp * (1 - zoom_used))
@@ -106,22 +103,21 @@ def drs_auto_zoom(T_values, RESP, zoom_frac=0.20, min_points=15):
 
 
 def plot_drs_zoom(T_fit, RESP_fit, Tp, Dmax, title=None):
-    """Versión para mostrar en pantalla (ejemplo)."""
     T_fit = np.asarray(T_fit, dtype=float)
     RESP_fit = np.asarray(RESP_fit, dtype=float)
 
     plt.figure(figsize=(10, 5))
-    plt.plot(T_fit, RESP_fit, color="navy", lw=2, label="DRS (Zoom Vent. Pred)")
+    plt.plot(T_fit, RESP_fit, color="navy", lw=2, label="DRS (predominant-window zoom)")
     plt.scatter([Tp], [Dmax], color="red", s=60, zorder=5,
                 label=f"Tp = {Tp:.3f} s\nDmax = {Dmax:.3f} m")
     plt.axvline(Tp, color="black", ls="--", lw=1)
 
     plt.grid(True, ls="--", lw=0.6, alpha=0.65)
-    plt.xlabel("Periodo Tn [s]", fontsize=12)
-    plt.ylabel("Desplazamiento relativo pico |u| [m]", fontsize=12)
+    plt.xlabel("Period Tn [s]", fontsize=12)
+    plt.ylabel("Peak relative displacement |u| [m]", fontsize=12)
 
     if title is None:
-        title = f"DRS (Zoom Ventana Predominante) — Tp = {Tp:.3f} s"
+        title = f"DRS (Predominant Window Zoom) — Tp = {Tp:.3f} s"
     plt.title(title, fontsize=14, fontweight="bold")
 
     if RESP_fit.size > 0:
@@ -136,22 +132,21 @@ def plot_drs_zoom(T_fit, RESP_fit, Tp, Dmax, title=None):
 
 
 def save_drs_zoom_png(T_fit, RESP_fit, Tp, Dmax, outpath, title=None, dpi=300):
-    """Versión para guardar PNG (pipeline)."""
     T_fit = np.asarray(T_fit, dtype=float)
     RESP_fit = np.asarray(RESP_fit, dtype=float)
 
     plt.figure(figsize=(10, 5))
-    plt.plot(T_fit, RESP_fit, color="navy", lw=2, label="DRS (Zoom Vent. Pred)")
+    plt.plot(T_fit, RESP_fit, color="navy", lw=2, label="DRS (predominant-window zoom)")
     plt.scatter([Tp], [Dmax], color="red", s=60, zorder=5,
                 label=f"Tp = {Tp:.3f} s\nDmax = {Dmax:.3f} m")
     plt.axvline(Tp, color="black", ls="--", lw=1)
 
     plt.grid(True, ls="--", lw=0.6, alpha=0.65)
-    plt.xlabel("Periodo Tn [s]", fontsize=12)
-    plt.ylabel("Desplazamiento relativo pico |u| [m]", fontsize=12)
+    plt.xlabel("Period Tn [s]", fontsize=12)
+    plt.ylabel("Peak relative displacement |u| [m]", fontsize=12)
 
     if title is None:
-        title = f"DRS (Zoom Ventana Predominante) — Tp = {Tp:.3f} s"
+        title = f"DRS (Predominant Window Zoom) — Tp = {Tp:.3f} s"
     plt.title(title, fontsize=14, fontweight="bold")
 
     if RESP_fit.size > 0:
@@ -167,29 +162,41 @@ def save_drs_zoom_png(T_fit, RESP_fit, Tp, Dmax, outpath, title=None, dpi=300):
 
 
 # ============================================================
-# FIG 3: R2 vs ALPHA (PRO) -> save
+# FIG 3: R2 vs ALPHA -> save
 # ============================================================
 
 def save_r2_vs_alpha_png(df_alpha, best_alpha, outpath, dpi=300):
     df_alpha = df_alpha.copy()
 
     alpha_vals = np.asarray(df_alpha["alpha"], dtype=float)
-    R2_sin = np.asarray(df_alpha["R2_noC"], dtype=float)
-    R2_con = np.asarray(df_alpha["R2_C"], dtype=float)
+    R2_vals = np.asarray(df_alpha["R2"], dtype=float)
 
     plt.figure(figsize=(11, 5))
 
-    plt.plot(alpha_vals, R2_sin, color="red", lw=2.0, marker="o", ms=5,
-             label="R² sin C (modelo físico)")
-    plt.plot(alpha_vals, R2_con, color="green", lw=1.5, ls="--", marker="o", ms=4,
-             label="R² con C (modelo extendido)")
+    plt.plot(
+        alpha_vals,
+        R2_vals,
+        color="crimson",
+        lw=2.0,
+        marker="o",
+        ms=5,
+        label="R² of sinusoidal fit"
+    )
 
     if np.isfinite(best_alpha):
-        plt.axvline(float(best_alpha), color="black", ls="--", lw=1.5,
-                    label=f"α óptimo (sin C) = {float(best_alpha):.3f}")
+        plt.axvline(
+            float(best_alpha),
+            color="black",
+            ls="--",
+            lw=1.5,
+            label=f"Optimal α = {float(best_alpha):.3f}"
+        )
 
-    plt.title("Variación del coeficiente de determinación R² con α",
-              fontsize=15, fontweight="bold")
+    plt.title(
+        "Variation of the coefficient of determination R² with α",
+        fontsize=15,
+        fontweight="bold"
+    )
     plt.xlabel("α", fontsize=13)
     plt.ylabel("R²", fontsize=13)
 
@@ -201,10 +208,10 @@ def save_r2_vs_alpha_png(df_alpha, best_alpha, outpath, dpi=300):
 
 
 # ============================================================
-# FIG 4: AJUSTE SENOIDAL FINAL (PRO + curva visual PCHIP) -> save
+# FIG 4: FINAL SINUSOIDAL FIT -> save
 # ============================================================
 
-def save_final_sine_fit_png(T_win, R_win, result_noC, result_C, outpath, dpi=300):
+def save_final_sine_fit_png(T_win, R_win, fit_result, outpath, dpi=300):
     T_win = np.asarray(T_win, dtype=float)
     R_win = np.asarray(R_win, dtype=float)
 
@@ -215,9 +222,9 @@ def save_final_sine_fit_png(T_win, R_win, result_noC, result_C, outpath, dpi=300
     plt.figure(figsize=(10.5, 6.8))
 
     if T_win.size < 2:
-        plt.scatter(T_win, R_win, s=28, color="royalblue", label="DRS (ventana)")
-        plt.title("Ajustes senoidales dentro de la ventana detectada", fontsize=18, fontweight="bold")
-        plt.xlabel("Periodo T [s]", fontsize=14)
+        plt.scatter(T_win, R_win, s=28, color="royalblue", label="DRS (window)")
+        plt.title("Sinusoidal fit within the detected window", fontsize=18, fontweight="bold")
+        plt.xlabel("Period T [s]", fontsize=14)
         plt.ylabel("DRS", fontsize=14)
         plt.grid(True, ls="--", lw=0.6, alpha=0.65)
         plt.legend(fontsize=12, loc="best")
@@ -226,16 +233,16 @@ def save_final_sine_fit_png(T_win, R_win, result_noC, result_C, outpath, dpi=300
         plt.close()
         return
 
-    # Ordenar
+    # sort
     order = np.argsort(T_win)
     T_win = T_win[order]
     R_win = R_win[order]
 
-    # Quitar duplicados en T
+    # remove duplicated T values
     T_unique, idx_unique = np.unique(T_win, return_index=True)
     R_unique = R_win[idx_unique]
 
-    # Curva visual suave
+    # smooth visual curve
     T_dense = np.linspace(float(T_unique.min()), float(T_unique.max()), 900)
 
     try:
@@ -245,28 +252,29 @@ def save_final_sine_fit_png(T_win, R_win, result_noC, result_C, outpath, dpi=300
     except Exception:
         R_smooth = np.interp(T_dense, T_unique, R_unique)
 
-    # DRS puntos + curva visual
-    
-    plt.plot(T_dense, R_smooth, color="royalblue", lw=2.4, alpha=0.85,
-             label="DRS (curva visual)")
-    
-    # Ajustes (usamos sine_fit / sine_fit_C del dict de resultados)
-    # result_noC["popt"] = [A, td, phi]
-    # result_C["popt"]   = [A, td, phi, C]
-    from .fit import sine_fit, sine_fit_C  # import local para evitar ciclos
+    # DRS visual
+    plt.plot(
+        T_dense,
+        R_smooth,
+        color="royalblue",
+        lw=2.4,
+        alpha=0.85,
+        label="DRS (visual curve)"
+    )
 
-    if result_noC is not None:
-        plt.plot(T_dense, sine_fit(T_dense, *result_noC["popt"]),
-                 color="crimson", lw=2.2,
-                 label=f"Sin C (R²={result_noC['R2']:.3f})")
+    from .fit import sine_fit  # local import to avoid cycles
 
-    if result_C is not None:
-        plt.plot(T_dense, sine_fit_C(T_dense, *result_C["popt"]),
-                 color="green", lw=2.0, ls="--",
-                 label=f"Con C (R²={result_C['R2']:.3f})")
+    if fit_result is not None:
+        plt.plot(
+            T_dense,
+            sine_fit(T_dense, *fit_result["popt"]),
+            color="crimson",
+            lw=2.2,
+            label=f"Sinusoidal fit (R²={fit_result['R2']:.3f})"
+        )
 
-    plt.title("Ajustes senoidales dentro de la ventana detectada", fontsize=18, fontweight="bold")
-    plt.xlabel("Periodo T [s]", fontsize=14)
+    plt.title("Sinusoidal fit within the detected window", fontsize=18, fontweight="bold")
+    plt.xlabel("Period T [s]", fontsize=14)
     plt.ylabel("DRS", fontsize=14)
     plt.grid(True, ls="--", lw=0.6, alpha=0.65)
     plt.xticks(fontsize=12)

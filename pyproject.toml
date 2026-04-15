@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "drs-duration"
-version = "1.0.0"
+version = "1.1.0"
 description = "Spectral estimation of seismic duration from the Displacement Response Spectrum (DRS)"
 readme = "README.md"
 requires-python = ">=3.9"

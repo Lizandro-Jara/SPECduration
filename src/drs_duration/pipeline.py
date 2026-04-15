@@ -12,7 +12,7 @@ from .window import detect_window_by_derivative
 from .fit import fit_sinusoidal_in_window
 from .alpha_scan import alpha_scan
 
-# plots PRO (los 4)
+# plots PRO
 from .plots import (
     save_drs_full_png,
     save_drs_zoom_png,
@@ -80,83 +80,102 @@ def run_pipeline(
 ):
     input_path = Path(input_path)
 
-    # =========================================================
-    # NUEVO: subcarpeta automática por cada registro
-    # outputs/<nombre_archivo_sin_extension>/
-    # =========================================================
+    # subcarpeta automática por cada registro
     base_out = Path(out_dir)
     base_out.mkdir(parents=True, exist_ok=True)
 
-    stem = input_path.stem  # nombre sin .txt
+    stem = input_path.stem
     safe = "".join(c if c.isalnum() or c in ("-", "_") else "_" for c in stem).strip("_")
     out_dir = base_out / safe
     out_dir.mkdir(parents=True, exist_ok=True)
-    # =========================================================
 
     # 1) cargar
     t, ug, dt = load_record_txt(input_path)
 
     # 2) DRS completo
     Tmin = cfg.tmin if cfg.tmin is not None else max(10 * dt, 0.01)
-    T_values, RESP = compute_drs(ug=ug, dt=dt, zeta=cfg.zeta, Tmin=Tmin, Tmax=cfg.tmax, dT=cfg.dT)
+    T_values, RESP = compute_drs(
+        ug=ug,
+        dt=dt,
+        zeta=cfg.zeta,
+        Tmin=Tmin,
+        Tmax=cfg.tmax,
+        dT=cfg.dT,
+    )
 
-    # Guardar tabla DRS
+    # guardar tabla DRS
     pd.DataFrame({"T": T_values, "DRS": RESP}).to_csv(out_dir / "drs_full.csv", index=False)
 
     # 3) zoom
     Tp, Dmax, Tmin_zoom, Tmax_zoom, T_fit, RESP_fit, zoom_used = _auto_zoom(
-        T_values, RESP,
+        T_values,
+        RESP,
         zoom_frac=cfg.zoom_frac,
         zoom_min_points=cfg.zoom_min_points,
-        zoom_fallback_frac=cfg.zoom_fallback_frac
+        zoom_fallback_frac=cfg.zoom_fallback_frac,
     )
 
     # 4) alpha scan
-    df_alpha, best_alpha = alpha_scan(T_fit, RESP_fit, cfg.alpha_min, cfg.alpha_max, cfg.alpha_step, verbose=False)
+    df_alpha, best_alpha = alpha_scan(
+        T_fit,
+        RESP_fit,
+        cfg.alpha_min,
+        cfg.alpha_max,
+        cfg.alpha_step,
+        verbose=False,
+    )
     df_alpha.to_csv(out_dir / "alpha_scan.csv", index=False)
 
     # 5) evaluar con alpha óptimo
     det = detect_window_by_derivative(T_fit, RESP_fit, alpha=best_alpha, plot=False)
-    fit_res = fit_sinusoidal_in_window(T_fit, RESP_fit, detect_res=det, use_detect_function=False, verbose=False)
+    fit_res = fit_sinusoidal_in_window(
+        T_fit,
+        RESP_fit,
+        detect_res=det,
+        use_detect_function=False,
+        verbose=False,
+    )
 
-    noC = fit_res["result_noC"]
-    conC = fit_res["result_C"]
+    fit_result = fit_res["result"]
 
     # 6) guardar resultados finales
     final = {
         "input": str(input_path),
         "dt": float(dt),
-        "Tp": Tp,
-        "Dmax": Dmax,
+        "Tp": float(Tp),
+        "Dmax": float(Dmax),
         "zoom_Tmin": float(Tmin_zoom),
         "zoom_Tmax": float(Tmax_zoom),
         "zoom_used": float(zoom_used),
         "best_alpha": float(best_alpha),
         "T_left": float(det["T_left"]),
         "T_right": float(det["T_right"]),
-        "td_noC": (float(noC["td"]) if noC else np.nan),
-        "R2_noC": (float(noC["R2"]) if noC else np.nan),
-        "td_C": (float(conC["td"]) if conC else np.nan),
-        "R2_C": (float(conC["R2"]) if conC else np.nan),
+        "window_method": det.get("method", ""),
+        "n_points_window": int(fit_result["n_points"]) if fit_result else np.nan,
+        "td": float(fit_result["td"]) if fit_result else np.nan,
+        "R2": float(fit_result["R2"]) if fit_result else np.nan,
+        "cycles": float(fit_result["cycles"]) if fit_result else np.nan,
+        "ssr": float(fit_result["ssr"]) if fit_result else np.nan,
+        "best_seed": str(fit_result["best_seed"]) if fit_result else "",
     }
     pd.DataFrame([final]).to_csv(out_dir / "results.csv", index=False)
 
-    # 7) figuras (LOS 4 PRO)
+    # 7) figuras
     if make_plots:
-        # fig 1: drs_full.png
+        # fig 1
         save_drs_full_png(T_values, RESP, out_dir / "drs_full.png", dpi=300)
 
-        # fig 2: drs_zoom.png
+        # fig 2
         save_drs_zoom_png(T_fit, RESP_fit, Tp, Dmax, out_dir / "drs_zoom.png", dpi=300)
 
-        # fig 3: r2_vs_alpha.png
+        # fig 3
         save_r2_vs_alpha_png(df_alpha, best_alpha, out_dir / "r2_vs_alpha.png", dpi=300)
 
-        # fig 4: sine_fit.png
+        # fig 4
         mask_win = (T_fit >= det["T_left"]) & (T_fit <= det["T_right"])
         T_win = np.asarray(T_fit[mask_win], dtype=float)
         R_win = np.asarray(RESP_fit[mask_win], dtype=float)
 
-        save_final_sine_fit_png(T_win, R_win, noC, conC, out_dir / "sine_fit.png", dpi=300)
+        save_final_sine_fit_png(T_win, R_win, fit_result, out_dir / "sine_fit.png", dpi=300)
 
     return final

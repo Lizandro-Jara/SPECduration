@@ -34,9 +34,9 @@ keywords:
   - Newmark-beta method
   - scientific software
   - reproducible research
-  
-version: "1.0.0"
-date-released: "2026-03-20"
+
+version: "1.1.0"
+date-released: "2026-04-14"
 
 authors:
   - given-names: "Lizandro"
@@ -69,4 +69,3 @@ preferred-citation:
   journal: "SoftwareX"
   year: 2026
   doi: ""
-
