@@ -180,9 +180,9 @@ The final workflow implemented in drs-duration is:
 
    - operational alpha:
      
-     $$
-     \alpha = 0.30
-     $$
+   \[
+   \alpha = 0.30
+   \]
 
 4. Physical validation of the detected window:
 
@@ -192,9 +192,9 @@ The final workflow implemented in drs-duration is:
 
 5. Restricted adaptive alpha search:
 
-   $$
-   0.20 \leq \alpha \leq 0.50
-   $$
+\[
+0.20 \leq \alpha \leq 0.50
+\]
 
    only if the operational configuration fails
 
