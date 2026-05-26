@@ -6,11 +6,12 @@ The method is based on the observation that high-resolution DRS obtained from im
 
 Instead of using time-domain thresholds, the software estimates a spectral duration parameter by automatically identifying the predominant region of the DRS and performing a nonlinear sinusoidal fit.
 
-The workflow is fully automatic and can be executed through a command-line interface, enabling consistent and reproducible analysis.
+The workflow is fully automatic and reproducible, combining robust derivative-based spectral window detection, operational alpha stabilization, restricted adaptive search, and auxiliary envelope-based fallback for complex spectral geometries.
 
 ---
 
 # Table of Contents
+
 - [Scientific background](#scientific-background)
 - [Features](#features)
 - [Installation](#installation)
@@ -19,16 +20,16 @@ The workflow is fully automatic and can be executed through a command-line inter
 - [Output structure](#output-structure)
 - [Example output](#example-output)
 - [Interpretation of results](#interpretation-of-results)
+- [Methodological workflow](#methodological-workflow)
 - [Reproducibility](#reproducibility)
 - [License](#license)
 - [Citation](#citation)
 
 ---
 
-## Scientific background
+# Scientific background
 
-
-The method is based on the observation that displacement response spectra (DRS) obtained from impulsive and near-fault ground motions may exhibit smooth harmonic-like segments across the spectrum. In practice, drs-duration identifies the predominant spectral region and fits a sinusoidal model within that window to estimate a characteristic spectral duration.
+The method is based on the observation that displacement response spectra (DRS) obtained from impulsive and near-fault ground motions may exhibit smooth harmonic-like regions across the spectrum.
 
 Within these regions, the spectral shape can be approximated by a sinusoidal model of the form:
 
@@ -36,31 +37,63 @@ $$
 R(T) = A \left| \sin\left(\frac{\pi t_d}{T} + \varphi \right) \right|
 $$
 
-where $t_d$ represents a characteristic spectral duration and $T$ is the structural period.
+where:
+
+- $R(T)$ is the displacement response spectrum,
+- $A$ is the spectral amplitude,
+- $t_d$ is the characteristic spectral duration,
+- $T$ is the structural period,
+- $\varphi$ is the phase parameter.
+
+The predominant spectral region is identified automatically using a robust derivative-based criterion centered around the dominant DRS peak.
+
+To improve robustness against local irregularities and isolated gradient peaks, the derivative threshold is defined using a percentile-based reference:
+
+$$
+\left| \frac{dR}{dT} \right|
+\leq
+\alpha \cdot P95\left(\left| \frac{dR}{dT} \right|\right)
+$$
+
+where:
+
+- $\alpha$ is an operational control parameter,
+- $P95$ denotes the 95th percentile of the absolute derivative values in the vicinity of the spectral peak.
+
+Sensitivity analyses performed over multiple near-fault records showed that intermediate operational values of $\alpha$ produce stable and physically coherent spectral windows while avoiding excessively narrow or overextended regions.
+
+The final workflow therefore adopts:
+
+$$
+\alpha = 0.30
+$$
+
+as the default operational value, together with restricted adaptive search and auxiliary fallback stabilization for complex cases.
 
 ---
 
+# Features
 
-## Features
-
-- Computation of Displacement Response Spectrum (DRS) using Newmark-β integration  
-- Automatic detection of the predominant spectral window around the DRS peak  
-- Derivative-based criterion with an alternative automatic fallback  
-- Systematic α-scan to select the optimal derivative threshold  
-- Nonlinear sinusoidal duration fitting, with and without constant offset  
-- Generation of high-quality diagnostic figures  
-- Command-line interface (CLI) for automated and batch processing  
-- Reproducible outputs (CSV tables and PNG figures)
+- High-resolution Displacement Response Spectrum (DRS) computation using the Newmark-β method
+- Robust derivative-based detection of the predominant spectral region
+- Operational alpha strategy for stable automatic window selection
+- Restricted adaptive alpha search for complex spectral cases
+- Auxiliary envelope-based fallback stabilization
+- Automatic physical validation of fitted solutions
+- Nonlinear sinusoidal fitting of spectral duration
+- Generation of reproducible diagnostic figures and CSV outputs
+- Command-line interface (CLI) for automated and batch processing
+- Deterministic and reproducible workflow
 
 ---
 
-## Installation
+# Installation
 
-### Requirements
+## Requirements
 
 - Python ≥ 3.9
 
-### Install from source (recommended for research)
+## Install from source
 
 ```bash
 pip install -e .
@@ -71,21 +104,21 @@ pip install -e .
 Run the software from the command line:
 
 ```bash
-drs-duration --input examples/San_Fernando_en_metros.txt --out outputs
+drs-duration --input examples/ChiChi_Taichung78_90.txt --out outputs
 
 ```
 ### Command-line options
 
 - `--input` : Path to the ground-motion record (`.txt`)
 - `--out` : Output directory
-- `--no-plots` : Disable figure generation (tables only)
+- `--no-plots` : Disable figure generation
 
 ## Input format
 
 The input file must be a plain text file with two columns:
 
-1. Time (or time step) in seconds  
-2. Ground acceleration (e.g., in m/s²)
+1. Time (s)
+2. Ground acceleration (e.g., m/s²)
 
 **Example:**
 
@@ -118,29 +151,66 @@ near-fault ground motion record.
 #### Displacement Response Spectrum
 ![DRS full](docs/figures/drs_full_example.png)
 
-#### Predominant harmonic window
+#### Detected predominant spectral region
 ![DRS zoom](docs/figures/drs_zoom_example.png)
-
-#### α-scan and goodness-of-fit
-![R2 vs alpha](docs/figures/r2_vs_alpha_example.png)
 
 #### Final sinusoidal fitting
 ![Sine fit](docs/figures/sine_fit_example.png)
 
 ## Interpretation of results
 
-The estimated duration parameter $t_d$ represents a spectral measure of seismic duration derived from the structure of the DRS. Unlike traditional time-domain duration metrics, this parameter is less sensitive to low-amplitude tails, late peaks, and noise.
+The estimated parameter $t_d$ represents a spectral measure of seismic duration derived from the geometry of the displacement response spectrum.
+Unlike traditional time-domain duration metrics, the proposed approach operates entirely in the spectral domain and is less sensitive to:
 
+- low-amplitude signal tails,
+- isolated late peaks,
+- and threshold-dependent truncation effects.
+
+The methodology focuses on identifying physically coherent spectral regions associated with the predominant dynamic response of the system.
+
+## Methodological workflow
+
+The final workflow implemented in drs-duration is:
+
+1. Computation of the high-resolution DRS using Newmark-β integration
+
+2. Detection of the predominant spectral peak
+
+3. Robust derivative-based window identification using:
+
+   - operational alpha:
+     
+     $$
+     \alpha = 0.30
+     $$
+
+4. Physical validation of the detected window:
+
+   - $R^2 \geq 0.95$
+   - sufficient window size
+   - physically admissible duration
+
+5. Restricted adaptive alpha search:
+
+   $$
+   0.20 \leq \alpha \leq 0.50
+   $$
+
+   only if the operational configuration fails
+
+6. Auxiliary envelope-based fallback stabilization for complex spectra
+
+7. Nonlinear sinusoidal fitting and final duration estimation
 
 ## Reproducibility
 
-All results are deterministic and reproducible. Given the same input record and command-line options, the software will generate identical outputs.
-
+All results are deterministic and reproducible.
+Given the same input record and command-line configuration, drs-duration generates identical outputs and figures.
+The workflow avoids manual intervention during spectral window selection.
 
 ## License
 
 This project is released under the MIT License.
-
 
 ## Citation
 

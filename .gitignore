@@ -4,15 +4,23 @@ __pycache__/
 *.pyd
 *.so
 *.egg-info/
-dist/
 build/
+dist/
 
 # Virtual environments
 .venv/
 venv/
 
-# Outputs / results (NO versionar)
+# Outputs / generated results
 outputs/
+*.png
+*.csv
+
+# Keep example/demo figures if needed
+!docs/figures/*.png
+
+# Jupyter / notebooks
+.ipynb_checkpoints/
 
 # OS / editors
 .DS_Store
@@ -22,3 +30,12 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Pytest / cache
+.pytest_cache/
+.mypy_cache/
+.cache/

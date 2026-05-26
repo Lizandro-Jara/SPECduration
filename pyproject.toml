@@ -4,9 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "drs-duration"
-version = "1.1.0"
-description = "Spectral estimation of seismic duration from the Displacement Response Spectrum (DRS)"
+version = "1.2.0"
+
+description = "Robust spectral-domain estimation of seismic duration from the Displacement Response Spectrum (DRS)"
+
 readme = "README.md"
+
 requires-python = ">=3.9"
 
 authors = [
@@ -19,11 +22,15 @@ license = { text = "MIT" }
 
 keywords = [
   "seismic duration",
+  "spectral duration",
   "displacement response spectrum",
   "near-fault ground motion",
+  "impulsive ground motion",
   "harmonic fitting",
-  "Newmark-beta method",
+  "spectral analysis",
   "structural dynamics",
+  "Newmark-beta method",
+  "scientific software",
   "reproducible research"
 ]
 
@@ -34,6 +41,10 @@ dependencies = [
   "pandas",
   "numba"
 ]
+
+[project.urls]
+Homepage = "https://github.com/Lizandro-Jara/drs-duration"
+Repository = "https://github.com/Lizandro-Jara/drs-duration"
 
 [project.scripts]
 drs-duration = "drs_duration.cli:main"

@@ -18,12 +18,15 @@ url: "https://github.com/Lizandro-Jara/drs-duration"
 abstract: >-
   drs-duration is a scientific software tool for estimating seismic duration
   from the Displacement Response Spectrum (DRS). Unlike traditional
-  time-domain metrics, the method operates in the spectral domain and avoids
-  the use of energy or acceleration thresholds. The software computes
-  high-resolution DRS using Newmark-β integration, identifies the predominant
-  spectral region through a derivative-based criterion, and performs nonlinear
-  harmonic fitting. The resulting parameter provides a stable spectral measure
-  of seismic duration, particularly for impulsive and near-fault ground motions.
+  time-domain metrics, the method operates entirely in the spectral domain
+  and avoids the use of energy or acceleration thresholds. The software
+  computes high-resolution DRS using Newmark-β integration, identifies the
+  predominant spectral region through a robust derivative-based criterion,
+  and performs nonlinear harmonic fitting to estimate a characteristic
+  spectral duration parameter. The workflow incorporates operational alpha
+  stabilization, restricted adaptive search, physical validation criteria,
+  and auxiliary envelope-based fallback strategies for complex spectral
+  geometries associated with impulsive and near-fault ground motions.
 
 keywords:
   - seismic duration
@@ -34,9 +37,11 @@ keywords:
   - Newmark-beta method
   - scientific software
   - reproducible research
+  - spectral duration
+  - structural dynamics
 
-version: "1.1.0"
-date-released: "2026-04-14"
+version: "1.2.0"
+date-released: "2026-05-25"
 
 authors:
   - given-names: "Lizandro"
@@ -59,13 +64,17 @@ preferred-citation:
   title: >-
     drs-duration: Autonomous program for the estimation of seismic duration
     through harmonic fitting of the Displacement Response Spectrum (DRS)
+
   authors:
     - given-names: "Lizandro"
       family-names: "Jara Araoz"
+
     - given-names: "Brandon Omar"
       family-names: "Burga Bustamante"
+
     - given-names: "Cesar"
       family-names: "Morales Morales"
+
   journal: "SoftwareX"
   year: 2026
   doi: ""
