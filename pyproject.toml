@@ -3,13 +3,10 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "drs-duration"
+name = "specduration"
 version = "1.2.0"
-
-description = "Robust spectral-domain estimation of seismic duration from the Displacement Response Spectrum (DRS)"
-
+description = "Spectral seismic duration estimation from the displacement response spectrum using a second-derivative window detector"
 readme = "README.md"
-
 requires-python = ">=3.9"
 
 authors = [
@@ -25,11 +22,14 @@ keywords = [
   "spectral duration",
   "displacement response spectrum",
   "near-fault ground motion",
-  "impulsive ground motion",
+  "pulse-type ground motion",
+  "spectral window detection",
+  "second-derivative analysis",
+  "spectral curvature",
   "harmonic fitting",
-  "spectral analysis",
-  "structural dynamics",
   "Newmark-beta method",
+  "structural dynamics",
+  "earthquake engineering",
   "scientific software",
   "reproducible research"
 ]
@@ -47,7 +47,7 @@ Homepage = "https://github.com/Lizandro-Jara/drs-duration"
 Repository = "https://github.com/Lizandro-Jara/drs-duration"
 
 [project.scripts]
-drs-duration = "drs_duration.cli:main"
+specduration = "specduration.cli:main"
 
 [tool.setuptools]
 package-dir = { "" = "src" }

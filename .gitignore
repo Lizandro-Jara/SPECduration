@@ -1,8 +1,10 @@
-# Python
+# Python cache / bytecode
 __pycache__/
 *.py[cod]
 *.pyd
 *.so
+
+# Build / packaging
 *.egg-info/
 build/
 dist/
@@ -10,13 +12,24 @@ dist/
 # Virtual environments
 .venv/
 venv/
+env/
 
-# Outputs / generated results
+# Generated outputs
 outputs/
-*.png
-*.csv
+outputs_*/
+results/
+results_*/
 
-# Keep example/demo figures if needed
+# Generated files in root directory
+/drs_full.csv
+/results.csv
+/drs_full.png
+/drs_window.png
+/second_derivative_window.png
+
+# Keep documentation/example figures
+!docs/
+!docs/figures/
 !docs/figures/*.png
 
 # Jupyter / notebooks
@@ -35,7 +48,7 @@ Thumbs.db
 *.tmp
 *.temp
 
-# Pytest / cache
+# Pytest / type-checking / cache
 .pytest_cache/
 .mypy_cache/
 .cache/

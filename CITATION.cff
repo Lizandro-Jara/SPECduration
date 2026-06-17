@@ -1,80 +1,60 @@
+```yaml
 cff-version: 1.2.0
 
 message: >-
   If you use this software in academic work, please cite it using the
-  preferred citation below.
+  citation information provided below.
 
 title: >-
-  drs-duration: Autonomous program for the estimation of seismic duration
-  through harmonic fitting of the Displacement Response Spectrum (DRS)
+  SPECduration: A Python package for estimating spectral seismic duration
+  from displacement response spectra
 
 type: software
-
 license: MIT
 
-repository-code: "https://github.com/Lizandro-Jara/drs-duration"
-url: "https://github.com/Lizandro-Jara/drs-duration"
+repository-code: "https://github.com/Lizandro-Jara/specduration"
+url: "https://github.com/Lizandro-Jara/specduration"
 
 abstract: >-
-  drs-duration is a scientific software tool for estimating seismic duration
-  from the Displacement Response Spectrum (DRS). Unlike traditional
-  time-domain metrics, the method operates entirely in the spectral domain
-  and avoids the use of energy or acceleration thresholds. The software
-  computes high-resolution DRS using Newmark-β integration, identifies the
-  predominant spectral region through a robust derivative-based criterion,
-  and performs nonlinear harmonic fitting to estimate a characteristic
-  spectral duration parameter. The workflow incorporates operational alpha
-  stabilization, restricted adaptive search, physical validation criteria,
-  and auxiliary envelope-based fallback strategies for complex spectral
-  geometries associated with impulsive and near-fault ground motions.
+  SPECduration is an open-source Python package for estimating spectral
+  seismic duration from displacement response spectra (DRS). The software
+  computes the DRS of earthquake acceleration records, identifies the
+  predominant spectral window using the second spectral derivative,
+  and performs harmonic fitting within the detected window to estimate
+  a spectral duration parameter. The workflow is designed to reduce
+  user-dependent window selection and to provide reproducible graphical
+  and tabular outputs for seismic record analysis.
 
 keywords:
   - seismic duration
+  - spectral duration
   - displacement response spectrum
-  - harmonic fitting
   - near-fault ground motion
-  - impulsive ground motion
-  - Newmark-beta method
+  - pulse-type ground motion
+  - spectral window detection
+  - second-derivative analysis
+  - harmonic fitting
+  - structural dynamics
+  - earthquake engineering
   - scientific software
   - reproducible research
-  - spectral duration
-  - structural dynamics
 
 version: "1.2.0"
-date-released: "2026-05-25"
+date-released: "2026-06-17"
 
 authors:
   - given-names: "Lizandro"
     family-names: "Jara Araoz"
-    affiliation: "Department of Civil Engineering, Universidad Peruana de Ciencias Aplicadas (UPC), Lima, Peru"
+    affiliation: "School of Civil Engineering, Universidad Peruana de Ciencias Aplicadas (UPC), Lima, Peru"
     orcid: "https://orcid.org/0009-0009-6350-4939"
 
   - given-names: "Brandon Omar"
     family-names: "Burga Bustamante"
-    affiliation: "Department of Civil Engineering, Universidad Peruana de Ciencias Aplicadas (UPC), Lima, Peru"
+    affiliation: "School of Civil Engineering, Universidad Peruana de Ciencias Aplicadas (UPC), Lima, Peru"
     orcid: "https://orcid.org/0009-0007-9341-9781"
 
-  - given-names: "Cesar"
-    family-names: "Morales Morales"
-    affiliation: "Department of Civil Engineering, Universidad Peruana de Ciencias Aplicadas (UPC), Lima, Peru"
+  - given-names: "Cesar A."
+    family-names: "Morales"
+    affiliation: "School of Civil Engineering, Universidad Peruana de Ciencias Aplicadas (UPC), Lima, Peru"
     orcid: "https://orcid.org/0000-0002-8820-9508"
-
-preferred-citation:
-  type: article
-  title: >-
-    drs-duration: Autonomous program for the estimation of seismic duration
-    through harmonic fitting of the Displacement Response Spectrum (DRS)
-
-  authors:
-    - given-names: "Lizandro"
-      family-names: "Jara Araoz"
-
-    - given-names: "Brandon Omar"
-      family-names: "Burga Bustamante"
-
-    - given-names: "Cesar"
-      family-names: "Morales Morales"
-
-  journal: "SoftwareX"
-  year: 2026
-  doi: ""
+```
