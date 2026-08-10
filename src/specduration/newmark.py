@@ -1,7 +1,6 @@
 import numpy as np
 from numba import njit
 
-
 # ----------------------------------------------------------------------
 # Newmark-beta time integration
 # ----------------------------------------------------------------------
@@ -18,14 +17,7 @@ def Newmark(
     Tn=0.1,
 ):
     """
-    Solve the linear SDOF response using the Newmark-beta method.
-
-    The oscillator is defined with unit mass and is subjected to the
-    input ground acceleration record. The returned response corresponds
-    to relative displacement, relative velocity, and relative acceleration.
-
-    Parameters
-    ----------
+    Parameters:
     ug : ndarray
         Ground acceleration time history.
     u0 : float
@@ -42,15 +34,6 @@ def Newmark(
         Damping ratio.
     Tn : float
         Natural period of the oscillator.
-
-    Returns
-    -------
-    u : ndarray
-        Relative displacement response.
-    up : ndarray
-        Relative velocity response.
-    upp : ndarray
-        Relative acceleration response.
     """
     if Tn <= 0:
         raise ValueError("Tn must be greater than zero.")

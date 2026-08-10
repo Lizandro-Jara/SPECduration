@@ -96,9 +96,6 @@ def compute_second_derivative(T, S):
     S'(T)  : first spectral derivative
     S''(T) : second spectral derivative
 
-    The derivatives are computed directly from the DRS values using
-    numerical gradients. No smoothing, envelope, alpha threshold, or
-    Savitzky-Golay filter is applied.
     """
     T = np.asarray(T, dtype=float)
     S = np.asarray(S, dtype=float)
@@ -329,23 +326,7 @@ def _extract_S2_boundary_diagnostics(
     left_zero_index,
     right_zero_index,
 ):
-    """
-    Extract S''(T) values at the detected window boundaries.
-
-    These diagnostics verify whether T_left and T_right correspond to
-    internal points immediately adjacent to a sign change of S''(T).
-
-    Reported values
-    ---------------
-    S2_left
-        S''(T) at T_left.
-    S2_left_outer
-        S''(T) at the closest external point on the left side.
-    S2_right
-        S''(T) at T_right.
-    S2_right_outer
-        S''(T) at the closest external point on the right side.
-    """
+    
     n = len(d2S)
 
     S2_left = float(d2S[i_left]) if 0 <= i_left < n else np.nan
@@ -409,31 +390,6 @@ def detect_window_by_second_derivative(
     extend_if_needed=True,
     plot=False,
 ):
-    """
-    Detect the predominant spectral window using S''(T).
-
-    Main strategy
-    -------------
-    The detector identifies the DRS peak period, T_peak, and searches for
-    real sign crossings of S''(T) on both sides of the peak. The selected
-    window boundaries are the internal points adjacent to those crossings.
-
-    Fallback strategy
-    -----------------
-    If no useful sign-crossing pair is found, low-curvature points away
-    from the peak are used. If the resulting window still has too few
-    points, it is extended around T_peak until the minimum number of
-    points is reached.
-
-    Notes
-    -----
-    S''(T) is used only for window detection. The harmonic fitting is
-    performed later on the original DRS values, S(T), inside the selected
-    window.
-
-    The parameters zero_tol_rel and plot are kept for API compatibility.
-    They are not used by the current real sign-crossing detector.
-    """
     _ = zero_tol_rel
     _ = plot
 

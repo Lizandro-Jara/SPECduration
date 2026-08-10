@@ -39,12 +39,13 @@ dependencies = [
   "scipy",
   "matplotlib",
   "pandas",
-  "numba"
+  "numba",
+  "openpyxl"
 ]
 
 [project.urls]
-Homepage = "https://github.com/Lizandro-Jara/drs-duration"
-Repository = "https://github.com/Lizandro-Jara/drs-duration"
+Homepage = "https://github.com/Lizandro-Jara/SPECduration"
+Repository = "https://github.com/Lizandro-Jara/SPECduration"
 
 [project.scripts]
 specduration = "specduration.cli:main"

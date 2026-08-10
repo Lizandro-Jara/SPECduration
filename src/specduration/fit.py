@@ -51,14 +51,7 @@ def sine_fit(T, A, td, phi):
 # ----------------------------------------------------------------------
 
 def _build_initial_guesses(T_win, S_scaled, detect_res):
-    """
-    Build deterministic initial guesses for the nonlinear harmonic fit.
-
-    The initial guesses do not define the window and do not use S'(T) or
-    S''(T). They are used only to improve numerical stability and reduce
-    sensitivity to local minima. The same generation rules are applied to
-    all records.
-    """
+    
     T_win = np.asarray(T_win, dtype=float)
     S_scaled = np.asarray(S_scaled, dtype=float)
 
@@ -159,15 +152,7 @@ def fit_sinusoidal_in_window(
     use_detect_function=True,
     verbose=False,
 ):
-    """
-    Fit the harmonic spectral model to the original DRS values inside the
-    detected spectral window.
-
-    The detected window is defined before the fitting stage using S''(T).
-    This function only performs the nonlinear harmonic fit on S(T) between
-    T_left and T_right.
-    """
-
+    
     # ------------------------------------------------------------------
     # 1. Get or compute the detected window
     # ------------------------------------------------------------------

@@ -6,8 +6,7 @@ message: >-
   citation information provided below.
 
 title: >-
-  SPECduration: A Python package for estimating spectral seismic duration
-  from displacement response spectra
+  SPECduration: Python software to estimate seismic duration through a novel spectral method
 
 type: software
 license: MIT

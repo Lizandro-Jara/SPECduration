@@ -8,9 +8,7 @@ from .newmark import Newmark
 # ----------------------------------------------------------------------
 
 def maxi(x):
-    """
-    Return the maximum absolute value of a response time history.
-    """
+    
     return float(np.max(np.abs(x)))
 
 

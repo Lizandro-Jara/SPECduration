@@ -20,9 +20,15 @@ outputs_*/
 results/
 results_*/
 
-# Generated files in root directory
+# Generated result files in root directory
 /drs_full.csv
+/second_derivative.csv
+/summary.csv
 /results.csv
+/results_diagnostics.csv
+/results.xlsx
+
+# Generated figures in root directory
 /drs_full.png
 /drs_window.png
 /second_derivative_window.png

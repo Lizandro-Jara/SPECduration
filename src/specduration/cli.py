@@ -21,7 +21,7 @@ def main():
     parser.add_argument(
         "--out",
         required=True,
-        help="Output directory where CSV files and figures will be saved.",
+        help="Output directory where result files and figures will be saved.",
     )
 
     parser.add_argument(
@@ -112,9 +112,6 @@ def main():
         "T_left",
         "T_right",
         "n_points_window",
-        "window_method",
-        "window_extended",
-        "valid_window",
         "td",
         "R2",
         "valid_solution",
@@ -124,13 +121,17 @@ def main():
         if key in result:
             print(f"{key}: {result[key]}")
 
-    print("\nOutput files saved in the selected output directory:")
+    print("\nMain output:")
+    print("- results.xlsx")
+
+    print("\nAdditional CSV outputs:")
+    print("- summary.csv")
+    print("- results_diagnostics.csv")
     print("- drs_full.csv")
     print("- second_derivative.csv")
-    print("- results.csv")
-    print("- results_diagnostics.csv")
 
     if not args.no_plots:
+        print("\nFigures:")
         print("- drs_full.png")
         print("- drs_window.png")
         print("- second_derivative_window.png")

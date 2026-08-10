@@ -20,14 +20,6 @@ from .plots import (
 
 @dataclass
 class PipelineConfig:
-    """
-    Main configuration for the SPECduration workflow.
-
-    The displacement response spectrum, S(T), is computed first.
-    The second spectral derivative, S''(T), is used only to detect
-    the predominant spectral window. The harmonic fitting is then
-    performed on the original DRS values inside that window.
-    """
 
     # DRS computation
     zeta: float = 0.05
@@ -56,13 +48,6 @@ def _auto_zoom_for_plot(
     zoom_frac=0.25,
     zoom_min_points=15,
 ):
-    """
-    Build a local zoom around the peak period for diagnostic use.
-
-    This helper is used only to store zoom limits and peak information
-    in the diagnostic output. It does not affect the detected window
-    or the harmonic fitting.
-    """
     T_values = np.asarray(T_values, dtype=float)
     RESP = np.asarray(RESP, dtype=float)
 
@@ -91,22 +76,13 @@ def _auto_zoom_for_plot(
         Tmin_zoom = float(T_values[i0])
         Tmax_zoom = float(T_values[i1])
 
-        mask_zoom = (T_values >= Tmin_zoom) & (T_values <= Tmax_zoom)
-
-    T_zoom = T_values[mask_zoom]
-    S_zoom = RESP[mask_zoom]
-
     idx_peak_zoom = int(np.argmin(np.abs(T_values - T_peak)))
     Dmax = float(RESP[idx_peak_zoom])
 
-    return Tmin_zoom, Tmax_zoom, T_zoom, S_zoom, Dmax
+    return Tmin_zoom, Tmax_zoom, Dmax
 
 
 def _safe_float(value, default=np.nan):
-    """
-    Convert a value to float while protecting the diagnostics from
-    missing or non-finite values.
-    """
     try:
         value = float(value)
         return value if np.isfinite(value) else default
@@ -115,9 +91,6 @@ def _safe_float(value, default=np.nan):
 
 
 def _safe_int_or_nan(value):
-    """
-    Convert a value to integer when possible; otherwise return NaN.
-    """
     try:
         if value is None:
             return np.nan
@@ -134,10 +107,6 @@ def _safe_int_or_nan(value):
 
 
 def _is_valid_solution(fit_result, detect_result, cfg: PipelineConfig) -> bool:
-    """
-    Check whether the detected window and the harmonic fitting satisfy
-    the minimum acceptance criteria.
-    """
     if fit_result is None:
         return False
 
@@ -166,19 +135,51 @@ def _is_valid_solution(fit_result, detect_result, cfg: PipelineConfig) -> bool:
     return True
 
 
+def _format_excel_sheet(writer, sheet_name):
+    worksheet = writer.sheets[sheet_name]
+    worksheet.freeze_panes = "A2"
+
+    for column_cells in worksheet.columns:
+        max_length = 0
+        column_letter = column_cells[0].column_letter
+
+        for cell in column_cells:
+            value = "" if cell.value is None else str(cell.value)
+            max_length = max(max_length, len(value))
+
+        worksheet.column_dimensions[column_letter].width = min(max_length + 2, 45)
+
+
+def _write_excel_report(
+    outpath,
+    summary_df,
+    drs_df,
+    derivative_df,
+    diagnostics_df,
+):
+    try:
+        with pd.ExcelWriter(outpath, engine="openpyxl") as writer:
+            summary_df.to_excel(writer, sheet_name="Summary", index=False)
+            drs_df.to_excel(writer, sheet_name="DRS", index=False)
+            derivative_df.to_excel(writer, sheet_name="SecondDerivative", index=False)
+            diagnostics_df.to_excel(writer, sheet_name="Diagnostics", index=False)
+
+            for sheet_name in writer.sheets:
+                _format_excel_sheet(writer, sheet_name)
+
+    except ModuleNotFoundError as exc:
+        raise RuntimeError(
+            "openpyxl is required to export results.xlsx. "
+            "Install it with: pip install openpyxl"
+        ) from exc
+
+
 def run_pipeline(
     input_path: str | Path,
     out_dir: str | Path,
     cfg: PipelineConfig = PipelineConfig(),
     make_plots: bool = True,
 ):
-    """
-    Run the full SPECduration workflow for a single seismic record.
-
-    The workflow computes the DRS, detects the predominant spectral
-    window using S''(T), fits the harmonic model inside that window,
-    exports CSV results, and optionally generates the main figures.
-    """
     input_path = Path(input_path)
 
     base_out = Path(out_dir)
@@ -217,14 +218,11 @@ def run_pipeline(
     T_values = np.asarray(T_values, dtype=float)
     RESP = np.asarray(RESP, dtype=float)
 
-    pd.DataFrame(
+    drs_df = pd.DataFrame(
         {
-            "T": T_values,
-            "DRS": RESP,
+            "Period T [s]": T_values,
+            "DRS S(T) [m]": RESP,
         }
-    ).to_csv(
-        out_record_dir / "drs_full.csv",
-        index=False,
     )
 
     # ------------------------------------------------------------------
@@ -266,13 +264,7 @@ def run_pipeline(
 
     T_peak = float(detect_result["T_peak"])
 
-    (
-        zoom_Tmin,
-        zoom_Tmax,
-        T_zoom,
-        S_zoom,
-        Dmax,
-    ) = _auto_zoom_for_plot(
+    zoom_Tmin, zoom_Tmax, Dmax = _auto_zoom_for_plot(
         T_values=T_values,
         RESP=RESP,
         T_peak=T_peak,
@@ -285,160 +277,162 @@ def run_pipeline(
     # ------------------------------------------------------------------
 
     diagnostics = {
-        "input": str(input_path),
-        "record": safe,
-        "dt_record": float(dt),
+        "Input file": str(input_path),
+        "Record": safe,
+        "Record time step [s]": float(dt),
 
-        "zeta": float(cfg.zeta),
-        "Tmin_DRS": float(Tmin),
-        "Tmax_DRS": float(cfg.tmax),
-        "dT_DRS": float(cfg.dT),
+        "Damping ratio": float(cfg.zeta),
+        "Minimum DRS period [s]": float(Tmin),
+        "Maximum DRS period [s]": float(cfg.tmax),
+        "DRS period step [s]": float(cfg.dT),
 
-        "T_peak": float(detect_result["T_peak"]),
-        "T_left": float(detect_result["T_left"]),
-        "T_right": float(detect_result["T_right"]),
+        "Peak period T_peak [s]": float(detect_result["T_peak"]),
+        "Left window limit T_left [s]": float(detect_result["T_left"]),
+        "Right window limit T_right [s]": float(detect_result["T_right"]),
 
-        "idx_peak": int(detect_result["idx_peak"]),
-        "idx_left": int(detect_result["idx_left"]),
-        "idx_right": int(detect_result["idx_right"]),
+        "Peak index": int(detect_result["idx_peak"]),
+        "Left window index": int(detect_result["idx_left"]),
+        "Right window index": int(detect_result["idx_right"]),
 
-        "left_zero_index": _safe_int_or_nan(
+        "Left zero-crossing index": _safe_int_or_nan(
             detect_result.get("left_zero_index")
         ),
-        "right_zero_index": _safe_int_or_nan(
+        "Right zero-crossing index": _safe_int_or_nan(
             detect_result.get("right_zero_index")
         ),
 
-        "S2_left": _safe_float(detect_result.get("S2_left", np.nan)),
-        "S2_left_outer": _safe_float(detect_result.get("S2_left_outer", np.nan)),
-        "S2_right": _safe_float(detect_result.get("S2_right", np.nan)),
-        "S2_right_outer": _safe_float(detect_result.get("S2_right_outer", np.nan)),
+        "S''(T_left)": _safe_float(detect_result.get("S2_left", np.nan)),
+        "S'' left outer point": _safe_float(detect_result.get("S2_left_outer", np.nan)),
+        "S''(T_right)": _safe_float(detect_result.get("S2_right", np.nan)),
+        "S'' right outer point": _safe_float(detect_result.get("S2_right_outer", np.nan)),
 
-        "T_left_outer": _safe_float(detect_result.get("T_left_outer", np.nan)),
-        "T_right_outer": _safe_float(detect_result.get("T_right_outer", np.nan)),
-        "idx_left_outer": _safe_int_or_nan(
+        "Left outer period [s]": _safe_float(detect_result.get("T_left_outer", np.nan)),
+        "Right outer period [s]": _safe_float(detect_result.get("T_right_outer", np.nan)),
+        "Left outer index": _safe_int_or_nan(
             detect_result.get("idx_left_outer")
         ),
-        "idx_right_outer": _safe_int_or_nan(
+        "Right outer index": _safe_int_or_nan(
             detect_result.get("idx_right_outer")
         ),
 
-        "n_points_window": int(detect_result["n_points_window"]),
-        "n_points_window_raw": int(detect_result["n_points_window_raw"]),
-        "min_points_window": int(detect_result["min_points_in_window"]),
+        "Window points": int(detect_result["n_points_window"]),
+        "Raw window points": int(detect_result["n_points_window_raw"]),
+        "Minimum window points": int(detect_result["min_points_in_window"]),
 
-        "window_method": str(detect_result["window_method"]),
-        "valid_window": bool(detect_result["valid_window"]),
-        "window_extended": bool(detect_result["window_extended"]),
-        "extension_points_left": int(detect_result["extension_points_left"]),
-        "extension_points_right": int(detect_result["extension_points_right"]),
+        "Window detection method": str(detect_result["window_method"]),
+        "Valid window": bool(detect_result["valid_window"]),
+        "Window extended": bool(detect_result["window_extended"]),
+        "Left extension points": int(detect_result["extension_points_left"]),
+        "Right extension points": int(detect_result["extension_points_right"]),
 
-        "zero_tol": (
-            float(detect_result["zero_tol"])
-            if np.isfinite(detect_result.get("zero_tol", np.nan))
-            else np.nan
-        ),
-        "zero_tol_rel": (
-            float(detect_result["zero_tol_rel"])
-            if np.isfinite(detect_result.get("zero_tol_rel", np.nan))
-            else np.nan
-        ),
-
-        "max_abs_d2R": (
-            float(detect_result["max_abs_d2R"])
-            if np.isfinite(detect_result.get("max_abs_d2R", np.nan))
-            else np.nan
-        ),
-        "max_abs_d2S": (
+        "Maximum |S''(T)|": (
             float(detect_result["max_abs_d2S"])
             if np.isfinite(detect_result.get("max_abs_d2S", np.nan))
             else np.nan
         ),
 
-        "regridded": bool(detect_result["regridded"]),
+        "Regridded spectrum": bool(detect_result["regridded"]),
 
-        "min_points_fit": int(cfg.min_points_fit),
-        "min_R2_fit": float(cfg.min_R2_fit),
-        "valid_solution": bool(valid_solution),
+        "Minimum fit points": int(cfg.min_points_fit),
+        "Minimum fit R²": float(cfg.min_R2_fit),
+        "Valid solution": bool(valid_solution),
 
-        "td": float(fit_result["td"]) if fit_result else np.nan,
-        "R2": float(fit_result["R2"]) if fit_result else np.nan,
-        "cycles": float(fit_result["cycles"]) if fit_result else np.nan,
-        "ssr": float(fit_result["ssr"]) if fit_result else np.nan,
-        "best_seed": str(fit_result["best_seed"]) if fit_result else "",
-        "fit_n_points": int(fit_result["n_points"]) if fit_result else np.nan,
+        "Spectral duration td [s]": float(fit_result["td"]) if fit_result else np.nan,
+        "R²": float(fit_result["R2"]) if fit_result else np.nan,
+        "Cycles inside window": float(fit_result["cycles"]) if fit_result else np.nan,
+        "Sum of squared residuals": float(fit_result["ssr"]) if fit_result else np.nan,
+        "Best initial seed": str(fit_result["best_seed"]) if fit_result else "",
+        "Fit points": int(fit_result["n_points"]) if fit_result else np.nan,
 
-        "seed_strategy": str(fit_result.get("seed_strategy", "")) if fit_result else "",
-        "n_initial_guesses": int(fit_result.get("n_initial_guesses", 0)) if fit_result else 0,
-        "n_td_candidates": int(fit_result.get("n_td_candidates", 0)) if fit_result else 0,
-        "n_phi_candidates": int(fit_result.get("n_phi_candidates", 0)) if fit_result else 0,
-        "A0_rule": str(fit_result.get("A0_rule", "")) if fit_result else "",
-        "td0_rule": str(fit_result.get("td0_rule", "")) if fit_result else "",
-        "phi0_rule": str(fit_result.get("phi0_rule", "")) if fit_result else "",
-        "td0_candidates": str(fit_result.get("td0_candidates", "")) if fit_result else "",
-        "phi0_candidates": str(fit_result.get("phi0_candidates", "")) if fit_result else "",
+        "Seed strategy": str(fit_result.get("seed_strategy", "")) if fit_result else "",
+        "Initial guesses": int(fit_result.get("n_initial_guesses", 0)) if fit_result else 0,
+        "td initial candidates": int(fit_result.get("n_td_candidates", 0)) if fit_result else 0,
+        "phi initial candidates": int(fit_result.get("n_phi_candidates", 0)) if fit_result else 0,
+        "A0 rule": str(fit_result.get("A0_rule", "")) if fit_result else "",
+        "td0 rule": str(fit_result.get("td0_rule", "")) if fit_result else "",
+        "phi0 rule": str(fit_result.get("phi0_rule", "")) if fit_result else "",
+        "td0 candidates": str(fit_result.get("td0_candidates", "")) if fit_result else "",
+        "phi0 candidates": str(fit_result.get("phi0_candidates", "")) if fit_result else "",
 
-        "zoom_Tmin": float(zoom_Tmin),
-        "zoom_Tmax": float(zoom_Tmax),
-        "Dmax": float(Dmax),
+        "Zoom minimum period [s]": float(zoom_Tmin),
+        "Zoom maximum period [s]": float(zoom_Tmax),
+        "Peak DRS value [m]": float(Dmax),
     }
 
     # ------------------------------------------------------------------
     # 7. Compact result table
     # ------------------------------------------------------------------
 
-    results_clean = {
-        "record": diagnostics["record"],
-        "dt_record": diagnostics["dt_record"],
-        "zeta": diagnostics["zeta"],
-        "dT_DRS": diagnostics["dT_DRS"],
+    summary = {
+        "Record": diagnostics["Record"],
+        "Record time step [s]": diagnostics["Record time step [s]"],
+        "Damping ratio": diagnostics["Damping ratio"],
+        "DRS period step [s]": diagnostics["DRS period step [s]"],
 
-        "T_peak": diagnostics["T_peak"],
-        "T_left": diagnostics["T_left"],
-        "T_right": diagnostics["T_right"],
+        "Peak period T_peak [s]": diagnostics["Peak period T_peak [s]"],
+        "Left window limit T_left [s]": diagnostics["Left window limit T_left [s]"],
+        "Right window limit T_right [s]": diagnostics["Right window limit T_right [s]"],
 
-        "n_points_window": diagnostics["n_points_window"],
-        "window_method": diagnostics["window_method"],
-        "window_extended": diagnostics["window_extended"],
-        "valid_window": diagnostics["valid_window"],
-
-        "td": diagnostics["td"],
-        "R2": diagnostics["R2"],
-        "valid_solution": diagnostics["valid_solution"],
+        "Window points": diagnostics["Window points"],
+        "Spectral duration td [s]": diagnostics["Spectral duration td [s]"],
+        "R²": diagnostics["R²"],
+        "Valid solution": diagnostics["Valid solution"],
     }
 
-    pd.DataFrame([results_clean]).to_csv(
-        out_record_dir / "results.csv",
-        index=False,
-    )
-
-    pd.DataFrame([diagnostics]).to_csv(
-        out_record_dir / "results_diagnostics.csv",
-        index=False,
-    )
+    summary_df = pd.DataFrame([summary])
+    diagnostics_df = pd.DataFrame([diagnostics])
 
     # ------------------------------------------------------------------
     # 8. Spectral derivative data
     # ------------------------------------------------------------------
 
-    pd.DataFrame(
+    derivative_df = pd.DataFrame(
         {
-            "T": detect_result["T_u"],
-            "DRS": detect_result["R_u"],
-
-            "dS_dT": detect_result.get("dS", detect_result["dR"]),
-            "d2S_dT2": detect_result.get("d2S", detect_result["d2R"]),
-
-            "dR_dT": detect_result["dR"],
-            "d2R_dT2": detect_result["d2R"],
+            "Period T [s]": detect_result["T_u"],
+            "DRS S(T) [m]": detect_result["S_u"],
+            "First derivative S'(T)": detect_result["dS"],
+            "Second derivative S''(T)": detect_result["d2S"],
         }
-    ).to_csv(
-        out_record_dir / "second_derivative.csv",
-        index=False,
     )
 
     # ------------------------------------------------------------------
-    # 9. Main output figures
+    # 9. CSV and Excel output files
+    # ------------------------------------------------------------------
+
+    summary_df.to_csv(
+        out_record_dir / "summary.csv",
+        sep=";",
+        index=False,
+    )
+
+    diagnostics_df.to_csv(
+        out_record_dir / "results_diagnostics.csv",
+        sep=";",
+        index=False,
+    )
+
+    drs_df.to_csv(
+        out_record_dir / "drs_full.csv",
+        sep=";",
+        index=False,
+    )
+
+    derivative_df.to_csv(
+        out_record_dir / "second_derivative.csv",
+        sep=";",
+        index=False,
+    )
+
+    _write_excel_report(
+        outpath=out_record_dir / "results.xlsx",
+        summary_df=summary_df,
+        drs_df=drs_df,
+        derivative_df=derivative_df,
+        diagnostics_df=diagnostics_df,
+    )
+
+    # ------------------------------------------------------------------
+    # 10. Main output figures
     # ------------------------------------------------------------------
 
     if make_plots:
@@ -464,4 +458,16 @@ def run_pipeline(
             dpi=300,
         )
 
-    return results_clean
+    return {
+        "record": safe,
+        "dt_record": float(dt),
+        "zeta": float(cfg.zeta),
+        "dT_DRS": float(cfg.dT),
+        "T_peak": float(detect_result["T_peak"]),
+        "T_left": float(detect_result["T_left"]),
+        "T_right": float(detect_result["T_right"]),
+        "n_points_window": int(detect_result["n_points_window"]),
+        "td": float(fit_result["td"]) if fit_result else np.nan,
+        "R2": float(fit_result["R2"]) if fit_result else np.nan,
+        "valid_solution": bool(valid_solution),
+    }

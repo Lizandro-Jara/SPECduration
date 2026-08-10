@@ -7,9 +7,7 @@ import matplotlib.pyplot as plt
 # ----------------------------------------------------------------------
 
 def _clean_xy(x, y):
-    """
-    Remove non-finite values and sort paired x-y data by the x coordinate.
-    """
+    
     x = np.asarray(x, dtype=float)
     y = np.asarray(y, dtype=float)
 
@@ -25,9 +23,7 @@ def _clean_xy(x, y):
 
 
 def _safe_ylim(y, margin=0.08):
-    """
-    Return a stable y-axis range with a small visual margin.
-    """
+
     y = np.asarray(y, dtype=float)
     y = y[np.isfinite(y)]
 
@@ -46,9 +42,7 @@ def _safe_ylim(y, margin=0.08):
 
 
 def _get_window_limits(T_values, T_left, T_right, left_frac=0.25, right_frac=0.25):
-    """
-    Define a local period range around the detected spectral window.
-    """
+    
     T_values = np.asarray(T_values, dtype=float)
 
     width = max(float(T_right) - float(T_left), 1e-12)
@@ -64,12 +58,7 @@ def _get_window_limits(T_values, T_left, T_right, left_frac=0.25, right_frac=0.2
 
 
 def _get_second_derivative_array(detect_result):
-    """
-    Return the second spectral derivative.
-
-    The preferred key is d2S. The d2R key is kept only for backward
-    compatibility with older output dictionaries.
-    """
+   
     if "d2S" in detect_result:
         return np.asarray(detect_result["d2S"], dtype=float)
 
@@ -102,9 +91,7 @@ def save_drs_full_png(
     title="Displacement Response Spectrum (DRS)",
     dpi=300,
 ):
-    """
-    Save the full displacement response spectrum.
-    """
+    
     T_values, RESP = _clean_xy(T_values, RESP)
 
     plt.figure(figsize=(10.5, 5.8))
@@ -146,14 +133,7 @@ def save_drs_window_png(
     title="DRS window detection and harmonic fit",
     dpi=300,
 ):
-    """
-    Save the main local DRS figure.
-
-    The blue curve shows the original DRS in a local range around the
-    detected window. The orange curve shows the harmonic fit evaluated
-    inside the detected window. The vertical lines indicate T_left,
-    T_peak, and T_right.
-    """
+  
     T_values, RESP = _clean_xy(T_values, RESP)
 
     T_peak = float(detect_result["T_peak"])
@@ -276,13 +256,6 @@ def save_drs_fit_overlay_png(
     title="Harmonic fitting inside detected window",
     dpi=300,
 ):
-    """
-    Save the harmonic fit as a separate figure.
-
-    This function is kept for backward compatibility. The recommended
-    report figure is save_drs_window_png, which already combines the
-    detected DRS window and the harmonic fit.
-    """
     T_values, RESP = _clean_xy(T_values, RESP)
 
     T_left = float(detect_result["T_left"])
@@ -360,13 +333,7 @@ def save_second_derivative_window_png(
     title="Second spectral derivative detector",
     dpi=300,
 ):
-    """
-    Save the S''(T) diagnostic figure around the detected window.
-
-    The full local S''(T) curve is shown together with the portion
-    inside the detected spectral window. The zero line is included to
-    verify the sign changes used by the detector.
-    """
+    
     T = np.asarray(detect_result["T_u"], dtype=float)
     S2 = _get_second_derivative_array(detect_result)
 
@@ -511,9 +478,7 @@ def save_spectrum_fit_overlay_png(
     title="Harmonic fitting inside detected window",
     dpi=300,
 ):
-    """
-    Backward-compatible alias for the separate harmonic fit figure.
-    """
+    
     save_drs_fit_overlay_png(
         T_values=T_values,
         RESP=RESP,
@@ -534,9 +499,7 @@ def save_drs_window_with_fit_inset_png(
     title="DRS window detection and harmonic fit",
     dpi=300,
 ):
-    """
-    Backward-compatible alias for the combined DRS window and fit figure.
-    """
+    
     save_drs_window_png(
         T_values=T_values,
         RESP=RESP,
@@ -557,11 +520,7 @@ def save_drs_zoom_png(
     title=None,
     dpi=300,
 ):
-    """
-    Save a simple DRS zoom around the peak period.
-
-    This function is kept for older workflows and quick internal checks.
-    """
+    
     T_zoom, RESP_zoom = _clean_xy(T_zoom, RESP_zoom)
 
     T_peak = float(T_peak)
@@ -616,13 +575,7 @@ def save_final_sine_fit_png(
     outpath,
     dpi=300,
 ):
-    """
-    Save the legacy final sine-fit figure.
-
-    This function remains available for older workflows. New reports
-    should use save_drs_window_png, which shows the harmonic fit together
-    with the detected DRS window.
-    """
+    
     T_win, R_win = _clean_xy(T_win, R_win)
 
     plt.figure(figsize=(10.5, 6.2))
