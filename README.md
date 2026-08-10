@@ -75,14 +75,25 @@ This resolution is adopted to preserve the local DRS geometry required for secon
 ## Requirements
 
 - Python 3.9 or later
+- Python 3.12 is recommended
 
 ## Install from source
 
-Clone or download the repository, then install the package in editable mode:
+Clone the repository and install the package from the project root directory:
 
 ```bash
-pip install -e .
+git clone https://github.com/Lizandro-Jara/SPECduration.git
+cd SPECduration
+python -m pip install -e .
 ```
+
+Alternatively, the repository can be downloaded as a ZIP file from GitHub. After extracting the folder, run the installation command from the project root directory, where `pyproject.toml` is located:
+
+```bash
+python -m pip install -e .
+```
+
+Using a virtual environment is recommended for a clean and reproducible installation.
 
 ---
 
