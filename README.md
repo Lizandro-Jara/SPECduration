@@ -169,13 +169,11 @@ near-fault ground-motion record.
 
 ## Interpretation of results
 
-The estimated parameter $t_d$ represents a spectral measure of seismic duration derived from the geometry of the displacement response spectrum.
+The estimated parameter $t_d$ is a spectral-duration descriptor obtained from the predominant region of the displacement response spectrum.
 
-Unlike conventional time-domain duration metrics, SPECduration estimates duration from the predominant spectral region of the DRS. Therefore, $t_d$ should be interpreted as a response-spectrum-based duration descriptor, not as a direct replacement for bracketed, significant, or threshold-based time-domain duration measures.
+It should be interpreted as a response-spectrum-based duration measure, not as a direct replacement for conventional time-domain duration metrics.
 
-The coefficient of determination $R^2$ indicates how well the harmonic model reproduces the local DRS geometry inside the detected window. The number of window points and the validation status help assess whether the detected window contains enough spectral information for a stable fit.
-
-A solution is considered valid when the detected window and harmonic fitting satisfy the internal acceptance criteria, including the minimum number of fitting points and the default threshold:
+The value of $R^2$ indicates how well the harmonic model fits the detected DRS window. By default, a solution is considered valid when the fitting criteria are satisfied and:
 
 $$
 R^2 \geq 0.98
@@ -206,9 +204,9 @@ $$
 
 ## Reproducibility
 
-SPECduration is designed to produce deterministic and reproducible results. Given the same input record, configuration, and software version, the package generates the same DRS, detected window, fitted parameters, validation status, and diagnostic figures.
+SPECduration is designed for deterministic and reproducible analysis. Given the same input record, configuration, and software version, the package generates the same DRS, detected window, fitted parameters, validation status, and output figures.
 
-The workflow avoids manual intervention during the selection of the fitting window, which supports reproducible analysis of individual records and batch processing of multiple ground-motion records.
+The workflow avoids manual selection of the fitting window, supporting consistent analysis of individual or multiple ground-motion records.
 
 ---
 
@@ -221,7 +219,3 @@ This project is released under the MIT License.
 ## Citation
 
 If you use this software in academic work, please cite it using the information provided in the `CITATION.cff` file.
-
-
-
-
