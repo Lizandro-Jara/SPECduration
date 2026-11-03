@@ -119,12 +119,12 @@ def save_drs_full_png(
     )
 
     plt.xlabel(
-        "Period T [s]",
+        "T(s)",
         fontsize=13,
     )
 
     plt.ylabel(
-        "Peak relative displacement |u| [m]",
+        "DRS [m]",
         fontsize=13,
     )
 
@@ -308,12 +308,12 @@ def save_drs_window_png(
     )
 
     plt.xlabel(
-        "Period T [s]",
+        "T(s)",
         fontsize=13,
     )
 
     plt.ylabel(
-        "Peak relative displacement |u| [m]",
+        "DRS [m]",
         fontsize=13,
     )
 
