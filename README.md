@@ -1,30 +1,27 @@
 
 # SPECduration
 
-SPECduration is an open-source Python package for estimating spectral seismic duration from the displacement response spectrum (DRS) of processed earthquake acceleration records.
+SPECduration is an open-source Python package for estimating seismic duration from the displacement response spectrum (DRS) of processed acceleration records.
 
-The software automatically identifies the predominant spectral window using the second derivative of the DRS and performs harmonic fitting to estimate the spectral duration parameter `T_s`.
-
-The fitting model is:
+The software automatically identifies the predominant sinusoidal peak of the DRS and estimates the seismic duration $T_s$ by means of harmonic fitting:
 
 $$
 DRS(T)=P\sin\left(\frac{\pi T_s}{T}-c\right)
 $$
 
-where `P` is the fixed maximum DRS amplitude, `T` is the natural period, and `c` is the phase parameter.
+where $P$ is the fixed maximum DRS value, $T$ is the natural period, and $c$ is the phase constant.
 
-The theoretical basis of the method is described in the [associated research paper](https://doi.org/10.1177/10775463251360873).
+A full and clear explanation of SPECduration (in fewer than 3,500 words) is provided in the accompanying SoftwareX manuscript. The theoretical basis of the spectral-duration method is described in the [original research paper](https://doi.org/10.1177/10775463251360873).
 
 ## Features
 
-- Displacement response spectrum computation using Newmark-beta integration.
-- Automatic detection of the predominant spectral window using the second spectral derivative.
-- Harmonic fitting with fixed `P` to estimate `T_s` and the coefficient of determination `R²`.
-- Automatic generation of numerical results and diagnostic figures.
+- Spectral seismic-duration estimation in the natural-period domain using the predominant sinusoidal shape of the DRS.
+- Automatic determination of the predominant fitting window using the second spectral derivative, replacing manual and visual selection.
+- Nonlinear harmonic fitting with fixed maximum DRS amplitude to estimate the seismic duration $T_s$.
+- Evaluation of fitting quality through the coefficient of determination $R^2$.
+- Automatic analysis from a processed acceleration record, without requiring user-defined duration thresholds or manual window selection.
 
 ## Installation
-
-SPECduration requires Python 3.9 or later.
 
 Clone the repository and install the package:
 
@@ -34,7 +31,7 @@ cd SPECduration
 python -m pip install .
 ```
 
-Alternatively, download the repository as a ZIP file, extract it, and run `python -m pip install .` from the project directory.
+Alternatively, download the repository as a ZIP file, extract it, and run the same installation command from the project directory.
 
 A virtual environment is recommended.
 
@@ -63,7 +60,7 @@ time(s)  acceleration(m/s^2)
 0.04     -0.00210
 ```
 
-The default analysis uses a damping ratio of 5% and a spectral period step of 0.01 s.
+The default analysis uses a damping ratio of 5% and a spectral period step of 0.01 s for DRS computation.
 
 For additional command-line options, run:
 
@@ -76,29 +73,32 @@ specduration --help
 SPECduration generates the following files for each processed record:
 
 **Main report**
-- `results.xlsx` — Excel report containing results, DRS data, numerical derivatives, and diagnostics.
+
+- `results.xlsx` — Excel report containing the estimated seismic duration $T_s$ and coefficient of determination $R^2$.
 
 **CSV files**
+
 - `summary.csv`
 - `results_diagnostics.csv`
 - `drs_full.csv`
 - `second_derivative.csv`
 
 **Diagnostic figures**
+
 - `drs_full.png`
 - `drs_window.png`
 - `second_derivative_window.png`
 
-### Displacement response spectrum
+### Fig. 2. Displacement response spectrum for Loma Prieta at Corralitos
 
-![Displacement response spectrum](docs/figures/drs_full.png)
+![Displacement response spectrum for Loma Prieta at Corralitos](docs/figures/drs_full.png)
 
-### Detected spectral window and harmonic fit
+### Fig. 3. Predominant DRS peak (blue) and harmonic fit (orange) over computed window for Corralitos record
 
-![Detected spectral window and harmonic fit](docs/figures/drs_window.png)
+![Predominant DRS peak and harmonic fit](docs/figures/drs_window.png)
 
 ## Citation and License
 
-If you use SPECduration in academic work, please cite the software using the information provided in [`CITATION.cff`](CITATION.cff).
+If you use SPECduration in academic work or elsewhere, please cite the software using the information provided in [`CITATION.cff`](CITATION.cff).
 
 SPECduration is distributed under the [MIT License](LICENSE).
