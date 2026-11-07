@@ -5,8 +5,7 @@ message: >-
   citation information provided below.
 
 title: >-
-  SPECduration: A Python package for estimating spectral seismic duration
-  from displacement response spectra
+  SPECduration: Python software to estimate seismic duration through a novel spectral method
 
 type: software
 license: MIT
@@ -42,7 +41,7 @@ version: "1.2.0"
 date-released: "2026-11-07"
 
 authors:
-  - given-names: "Lizandro"
+  - given-names: "David Lizandro"
     family-names: "Jara Araoz"
     affiliation: "School of Civil Engineering, Universidad Peruana de Ciencias Aplicadas (UPC), Lima, Peru"
     orcid: "https://orcid.org/0009-0009-6350-4939"
